@@ -1,0 +1,9 @@
+.editor-w-preview {
+	display: flex;
+  	align-items: stretch;
+
+  	 textarea {
+	    min-height: 100%;
+	    width: 100%;
+	}
+}

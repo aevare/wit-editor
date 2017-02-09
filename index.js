@@ -9,12 +9,24 @@ module.exports = function (config) {
 	const options = Object.assign({}, baseOptions, config);
 	const router = express.Router();
 
+	router.use('/static', express.static(path.join(__dirname,'public')));
+
   	router.route('/')
   		.get((req, res) => {
-			res.sendFile(path.join(__dirname,'html','index.html'));
+			res.sendFile(path.join(__dirname,'public','index.html'));
 		});
 
-	router.route('/:type')
+	router.route('/api/')
+  		.get((req, res) => {
+			if(config.editables){
+			  	res.json(Object.keys(config.editables));
+			}
+			else {
+				return res.sendStatus(401);
+			}
+		});
+
+	router.route('/api/:type')
   		.get((req, res) => {
 			const type = req.params.type;
 			const filesFound =  [];
@@ -37,13 +49,13 @@ module.exports = function (config) {
 			}
 		});
 
-	router.route('/:type/:slug')
+	router.route('/api/:type/:slug')
   		.get((req, res) => {
 			const type = req.params.type;
 			const slug = req.params.slug;
 
 			if(config.editables[type] && config.editables[type].path){
-				fs.readFile(path.join(__dirname, type, `${slug}.md`), (err, data) => {
+				fs.readFile(path.join(__dirname, type, `${slug}`), (err, data) => {
 					if(err){
 						return res.sendStatus(404);
 					}
@@ -55,8 +67,6 @@ module.exports = function (config) {
 				return res.sendStatus(401);
 			}
 		});
-
-	router.use('/static', express.static(path.join(__dirname,'html')));
 
   	return router;
 };

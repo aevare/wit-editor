@@ -1,7 +1,7 @@
 const express = require('express');
 const path    = require('path');
-var app       = express();
-var editor    = require('./index');
+const app     = express();
+const editor  = require('./index');
 
 var config = {
     editables: {
@@ -46,7 +46,7 @@ var config = {
 }
 
 app.get('/', function(req, res) {
-    res.redirect(301, '/editor');
+    res.redirect(301, '/editor/');
 });
 
 app.use('/editor', editor(config));

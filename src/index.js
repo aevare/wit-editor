@@ -1,4 +1,8 @@
-var react = import('react');
-var reactDom = import('react-dom');
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Routing from './containers/Routing';
 
-
+ReactDOM.render(
+	<Routing />,
+	document.getElementById('editor-app')
+);
