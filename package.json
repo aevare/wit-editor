@@ -1,0 +1,27 @@
+{
+  "name": "wit-editor",
+  "version": "1.0.0",
+  "description": "Markdown editor made for WIT cms",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js",
+    "build": "browserify",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "wit",
+    "editor",
+    "cms",
+    "markdown"
+  ],
+  "author": "Ævar Eggertsson <aevar@eggertsson.org>",
+  "license": "MIT",
+  "dependencies": {
+    "json-front-matter": "^1.0.0",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2"
+  },
+  "devDependencies": {
+    "express": "^4.14.1"
+  }
+}
