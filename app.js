@@ -6,41 +6,39 @@ const editor  = require('./index');
 var config = {
     editables: {
         'pages': {
-            path: 'pages',
+            path: path.join(__dirname, 'pages'),
             prepends: {
-                fields: [{
+                fields: {
                     'title': 'string',
                     'author': 'string',
                     'description': 'string'
-                }],
+                },
                 tmpl: `{{{
-"title"       : "%title%",
-"author"      : "%author%",
-"description" : "%description%""
+"title"       : "{title}",
+"author"      : "{author}",
+"description" : "{description}"
 }}}`
-            },
-            appends: null
+            }
         },
         'posts': { 
-            path: 'posts',
+            path: path.join(__dirname, 'posts'),
             prepends: {
-                fields: [{
+                fields: {
                     'title'      : 'string',
                     'author'     : 'string',
                     'description': 'string',
                     'categories' : 'arr_of_string',
                     'tags'       : 'arr_of_string',
                     'date'       : 'date_now:yyy-mm-dd'
-                }],
+                },
                 tmpl: `{{{
-"title"      : %title%,
-"author"     : %author%,
-"categories" : [ %categories% ],
-"tags"       : [ %tags% ],
-"date"       : %date%
+"title"      : "{title}",
+"author"     : "{author}",
+"categories" : [ {categories} ],
+"tags"       : [ {tags} ],
+"date"       : "{date}"
 }}}`            
-            },
-            appends: null
+            }
          }
     }
 }

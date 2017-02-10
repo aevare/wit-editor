@@ -30982,6 +30982,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
@@ -30994,17 +30996,19 @@ var _reactDom2 = _interopRequireDefault(_reactDom);
 
 var _reactRouter = require('react-router');
 
-var _http = require('../shared/http');
-
 var _reactMarkdown = require('react-markdown');
 
 var _reactMarkdown2 = _interopRequireDefault(_reactMarkdown);
+
+var _http = require('../shared/http');
 
 var _Loading = require('../components/Loading');
 
 var _Loading2 = _interopRequireDefault(_Loading);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -31020,12 +31024,9 @@ var Editor = function (_Component) {
 
         var _this = _possibleConstructorReturn(this, (Editor.__proto__ || Object.getPrototypeOf(Editor)).call(this, props));
 
-        _this.updateMarkDown = _this.updateMarkDown.bind(_this);
-
         _this.state = {
             loading: true,
-            data: {},
-            markdown: ''
+            data: {}
         };
         return _this;
     }
@@ -31042,22 +31043,57 @@ var Editor = function (_Component) {
             }).then(function (data) {
                 self.setState({
                     loading: false,
-                    data: data,
-                    markdown: data.markdown
+                    data: data
                 });
             });
         }
     }, {
         key: 'updateMarkDown',
         value: function updateMarkDown(e) {
-            console.log(e.target.value);
             this.setState({
-                markdown: e.target.value
+                data: _extends({}, this.state.data, {
+                    markdown: e.target.value
+                })
+            });
+        }
+    }, {
+        key: 'updateAttr',
+        value: function updateAttr(key, e) {
+            this.setState({
+                data: _extends({}, this.state.data, {
+                    attr: _extends({}, this.state.data.attr, _defineProperty({}, key, e.target.value))
+                })
+            });
+        }
+    }, {
+        key: 'saveContent',
+        value: function saveContent() {
+            var _this2 = this;
+
+            var self = this;
+            var type = self.props.params.type;
+            var id = this.props.params.id;
+
+            this.setState({
+                loading: true
+            });
+
+            var data = this.state.data;
+
+            var dataStr = JSON.stringify(data);
+
+            (0, _http.put)('api/' + type + '/' + id, dataStr).then(function (resp) {
+                console.log(resp);
+                _this2.setState({
+                    loading: false
+                });
             });
         }
     }, {
         key: 'render',
         value: function render() {
+            var _this3 = this;
+
             var id = this.props.params.id;
             var state = this.state;
             var data = state.data;
@@ -31080,7 +31116,9 @@ var Editor = function (_Component) {
                             { className: 'float-right' },
                             _react2.default.createElement(
                                 'button',
-                                { className: 'button' },
+                                { onClick: function onClick() {
+                                        _this3.saveContent();
+                                    }, className: 'button' },
                                 'Save'
                             )
                         ),
@@ -31099,7 +31137,9 @@ var Editor = function (_Component) {
                                     null,
                                     key
                                 ),
-                                _react2.default.createElement('input', { type: 'text', value: val })
+                                _react2.default.createElement('input', { type: 'text', value: val, onChange: function onChange(e) {
+                                        _this3.updateAttr(key, e);
+                                    } })
                             );
                         }),
                         _react2.default.createElement(
@@ -31108,12 +31148,14 @@ var Editor = function (_Component) {
                             _react2.default.createElement(
                                 'div',
                                 { className: 'column column-50' },
-                                _react2.default.createElement('textarea', { onChange: this.updateMarkDown, value: state.markdown })
+                                _react2.default.createElement('textarea', { value: state.data.markdown, onChange: function onChange(e) {
+                                        _this3.updateMarkDown(e);
+                                    } })
                             ),
                             _react2.default.createElement(
                                 'div',
                                 { className: 'column column-50' },
-                                _react2.default.createElement(_reactMarkdown2.default, { source: state.markdown })
+                                _react2.default.createElement(_reactMarkdown2.default, { source: state.data.markdown })
                             )
                         )
                     )
@@ -31232,7 +31274,6 @@ var Editor = function (_Component) {
     _createClass(Editor, [{
         key: 'componentWillReceiveProps',
         value: function componentWillReceiveProps(newProps) {
-            console.log('Will Receive', newProps.params.type !== this.props.params.type);
             if (newProps.params.type !== this.props.params.type) {
                 this.setState({
                     loading: true
@@ -31257,14 +31298,12 @@ var Editor = function (_Component) {
     }, {
         key: 'componentDidMount',
         value: function componentDidMount() {
-            console.log('Did mount');
             this.getPropsInfo(this.props);
         }
     }, {
         key: 'componentWillUpdate',
         value: function componentWillUpdate(nextProps, nextState) {
             if (nextProps.params.type !== this.props.params.type) {
-                console.log('Will Update!');
                 this.getPropsInfo(nextProps);
             }
         }
@@ -31570,6 +31609,17 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 var post = exports.post = function post(url, data, options) {
     return fetch(url, _extends({
         method: "POST",
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json; charset=utf-8'
+        },
+        body: data
+    }, options));
+};
+
+var put = exports.put = function put(url, data, options) {
+    return fetch(url, _extends({
+        method: "PUT",
         credentials: 'same-origin',
         headers: {
             'Content-Type': 'application/json; charset=utf-8'

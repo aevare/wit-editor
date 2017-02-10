@@ -18,7 +18,6 @@ class Editor extends Component {
     }
 
     componentWillReceiveProps(newProps) {
-        console.log('Will Receive', (newProps.params.type !== this.props.params.type));
         if (newProps.params.type !== this.props.params.type) {
             this.setState({
                 loading: true
@@ -42,13 +41,11 @@ class Editor extends Component {
     }
 
     componentDidMount() {
-        console.log('Did mount');
         this.getPropsInfo(this.props);
     }
 
     componentWillUpdate(nextProps, nextState) {
         if (nextProps.params.type !== this.props.params.type) {
-            console.log('Will Update!')
             this.getPropsInfo(nextProps);
         }
     }
